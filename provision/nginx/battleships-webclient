@@ -1,0 +1,12 @@
+server {
+    listen 8080;
+    server_name battleships-webclient.vagrant;
+    root /var/www/battleships-webclient/web;
+
+    index index.html;
+    location / {
+        try_files $uri $uri/ =404;
+    }
+    error_log /var/log/nginx/battleships-webclient_error.log;
+    access_log /var/log/nginx/battleships-webclient_access.log;
+}
