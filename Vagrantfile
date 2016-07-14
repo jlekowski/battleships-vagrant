@@ -29,8 +29,8 @@ Vagrant.configure(2) do |config|
     end
     db.vm.network "private_network", ip: "10.10.10.11"
     db.vm.host_name = "db-master"
-    db.vm.provision "shell", path: "provision/root-db-master.sh"
-    db.vm.provision "shell", path: "provision/user-db-master.sh", privileged: false
+    db.vm.provision "shell", path: "provision/root-db-master.sh", args: ['10.10.10.11']
+    db.vm.provision "shell", path: "provision/user-db.sh", privileged: false
   end
 
   config.vm.define "db-slave", autostart: false do |db|
@@ -40,6 +40,8 @@ Vagrant.configure(2) do |config|
     end
     db.vm.network "private_network", ip: "10.10.10.12"
     db.vm.host_name = "db-slave"
+    db.vm.provision "shell", path: "provision/root-db-slave.sh", args: ['10.10.10.12']
+    db.vm.provision "shell", path: "provision/user-db.sh", privileged: false
   end
 
   config.ssh.forward_agent = true

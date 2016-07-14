@@ -4,10 +4,9 @@
 echo "127.0.0.1 battleships-api.vagrant" | sudo tee -a /etc/hosts
 
 # DB user
-sudo mysql -e "CREATE DATABASE battleships CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;"
-sudo mysql -e "CREATE USER 'ubuntu'@'127.0.0.1' IDENTIFIED BY 'ubuntu'";
-sudo mysql -e "GRANT ALL PRIVILEGES ON battleships.* TO 'ubuntu'@'127.0.0.1' WITH GRANT OPTION";
-sudo mysql -e "FLUSH PRIVILEGES";
+sudo mysql -e "CREATE DATABASE battleships CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci"
+sudo mysql -e "GRANT ALL PRIVILEGES ON battleships.* TO 'ubuntu'@'127.0.0.1' IDENTIFIED BY 'ubuntu'"
+sudo mysql -e "FLUSH PRIVILEGES"
 
 # Web server config (file copied by Vagrant file provision)
 sudo mv battleships-api /etc/nginx/sites-available/battleships-api
