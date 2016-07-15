@@ -37,6 +37,15 @@ sed -i -e "s/loggly_tag:.*/loggly_tag: battleships-api-vagrant/" app/config/para
 sed -i -e "s/varnish_debug:.*/varnish_debug: true/" app/config/parameters.yml
 sed -i -e "s/varnish_enabled:.*/varnish_enabled: true/" app/config/parameters.yml
 sed -i -e "s/varnish_base_url:.*/varnish_base_url: battleships-api.vagrant/" app/config/parameters.yml
+echo "
+    database_slaves:
+        slave1:
+            host:     \"10.10.10.12\"
+            port:     \"%database_port%\"
+            dbname:   \"%database_name%\"
+            user:     \"%database_user%\"
+            password: \"%database_password%\"
+" | tee -a app/config/parameters.yml
 
 ## install dependencies
 composer install -n

@@ -21,10 +21,7 @@ read-only = 1
 
 service mysql restart
 
-#SHOW SLAVE STATUS \G
-#LOAD DATA FROM MASTER;
 mysql -e "STOP SLAVE"
 # this is "not pretty" to hardcode log file and pos here instead of getting from master
 mysql -e "CHANGE MASTER TO MASTER_HOST='10.10.10.11', MASTER_USER='slave_user', MASTER_PASSWORD='slave', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=154"
 mysql -e "START SLAVE"
-#SHOW SLAVE STATUS \G

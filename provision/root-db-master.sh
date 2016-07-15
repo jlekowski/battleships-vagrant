@@ -20,5 +20,3 @@ binlog_do_db = battleships
 " | tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
 
 service mysql restart
-
-#mysql -e "SHOW MASTER STATUS"

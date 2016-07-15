@@ -36,13 +36,24 @@ Vagrant.configure(2) do |config|
   config.vm.define "db-slave", autostart: false do |db|
     config.vm.provider "virtualbox" do |vb|
       vb.name = "battleships-vagrant-db-slave"
-      vb.memory = "1024"
+      vb.memory = "768"
     end
     db.vm.network "private_network", ip: "10.10.10.12"
     db.vm.host_name = "db-slave"
     db.vm.provision "shell", path: "provision/root-db-slave.sh", args: ['10.10.10.12']
     db.vm.provision "shell", path: "provision/user-db.sh", privileged: false
   end
+
+#  config.vm.define "db-slave2", autostart: false do |db|
+#    config.vm.provider "virtualbox" do |vb|
+#      vb.name = "battleships-vagrant-db-slave2"
+#      vb.memory = "768"
+#    end
+#   db.vm.network "private_network", ip: "10.10.10.13"
+#    db.vm.host_name = "db-slave2"
+#    db.vm.provision "shell", path: "provision/root-db-slave.sh", args: ['10.10.10.13']
+#    db.vm.provision "shell", path: "provision/user-db.sh", privileged: false
+#  end
 
   config.ssh.forward_agent = true
 end

@@ -80,3 +80,11 @@ sudo varnishncsa -F '%U%q (%m) %{Varnish:hitmiss}x' -n $(hostname)
 # ban/clear cache
 sudo varnishadm "ban req.url ~ /"
 ```
+
+DB commands
+```
+# check master db status
+SHOW MASTER STATUS \G
+# check slave db status
+SHOW SLAVE STATUS \G
+```
