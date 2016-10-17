@@ -1,5 +1,8 @@
 #!/bin/bash
 
+ipAddress=$1;
+enableLogging=$2
+
 # to avoid unknown host when sudo (not necessary for some vagrant boxes)
 sed -i -e "s/localhost$/localhost $(hostname)/" /etc/hosts
 
@@ -12,7 +15,10 @@ mysql -e "GRANT ALL PRIVILEGES ON battleships.* TO 'ubuntu'@'10.10.10.10' IDENTI
 mysql -e "GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' IDENTIFIED BY 'slave'"
 mysql -e "FLUSH PRIVILEGES";
 
-sed -i -e "s/bind-address.*= 127.0.0.1/bind-address = $1/" /etc/mysql/mysql.conf.d/mysqld.cnf
+sed -i -e "s/bind-address.*= 127.0.0.1/bind-address = $ipAddress/" /etc/mysql/mysql.conf.d/mysqld.cnf
+if [ $enableLogging ]; then
+    sed -i -e "s/#general_log/general_log/" /etc/mysql/mysql.conf.d/mysqld.cnf
+fi
 echo "
 server-id = 1
 log_bin = /var/log/mysql/mysql-bin.log

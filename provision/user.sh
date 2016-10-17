@@ -1,5 +1,8 @@
 #!/bin/bash
 
+gitName=$1;
+gitEmail=$2;
+
 echo "
 :set hlsearch
 :set number
@@ -18,8 +21,8 @@ function parse_git_repo() {
 PS1='\[\033[1;31m\][\[\033[1;32m\]\t\[\033[1;31m\]][\[\033[1;33m\]\u\[\033[1;31m\]@\[\033[1;33m\]\h\[\033[1;31m\]:\[\033[1;36m\]\W\[\033[1;31m\]]\$(parse_git_repo)\$(parse_git_branch) \[\033[00m\]$\[\033[00m\] '
 " | tee -a ~/.bashrc
 
-git config --global user.name "$1"
-git config --global user.email "$2"
+git config --global user.name "$gitName"
+git config --global user.email "$gitEmail"
 git config --global diff.tool vimdiff
 git config --global color.diff auto
 git config --global color.status auto

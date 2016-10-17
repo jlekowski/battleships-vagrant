@@ -1,14 +1,18 @@
 #!/bin/bash
 
+isDevEnv=$1;
+
 # to avoid unknown host when sudo (not necessary for some vagrant boxes)
-sed -i -e "s/localhost$/localhost $(hostname)/" /etc/hosts
+#sed -i -e "s/localhost$/localhost $(hostname)/" /etc/hosts
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y git vim nginx mysql-server varnish php php-fpm php-xml php-mysql php-curl php-pear php-dev php-intl php-xdebug php-phpdbg unzip acl
-
-# support for folder sharing on Windows
-#apt-get install -y virtualbox-guest-dkms
+apt-get install -y git vim nginx varnish php php-fpm php-xml php-mysql php-curl php-pear php-dev php-intl php-xdebug php-phpdbg unzip acl
+if [ $isDevEnv ]; then
+    apt-get install -y mysql-server php-mbstring
+    # support for folder sharing on Windows
+    #apt-get install -y virtualbox-guest-dkms
+fi
 
 # APC for backward compatibility
 pear config-set preferred_state beta
@@ -29,13 +33,15 @@ opcache.fast_shutdown = 1
 opcache.enable_file_override = 1
 " | tee -a /etc/php/7.0/fpm/php.ini
 
-# Enable Xdebug
-echo "
-xdebug.remote_enable = 1
-xdebug.idekey = "PHPSTORM"
-xdebug.overload_var_dump = 0
-xdebug.remote_connect_back = 1
-" | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini
+if [ $isDevEnv ]; then
+    # Enable Xdebug
+    echo "
+    xdebug.remote_enable = 1
+    xdebug.idekey = "PHPSTORM"
+    xdebug.overload_var_dump = 0
+    xdebug.remote_connect_back = 1
+    " | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini
+fi
 
 # Enable APC/APCU
 echo "
@@ -68,3 +74,8 @@ ln -s /lib/systemd/system/varnish.service /etc/systemd/system/varnish.service
 systemctl reload varnish.service
 systemctl daemon-reload
 service varnish restart
+
+if [ $isDevEnv ]; then
+    sed -i -e "s/#general_log/general_log/" /etc/mysql/mysql.conf.d/mysqld.cnf
+fi
+service mysql restart

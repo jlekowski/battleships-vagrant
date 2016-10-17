@@ -1,8 +1,31 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+$aclScript = <<SCRIPT
+  mkdir /tmp/var
+  sudo setfacl -R -m u:"www-data":rwX -m u:`whoami`:rwX /tmp/var
+  sudo setfacl -dR -m u:"www-data":rwX -m u:`whoami`:rwX /tmp/var
+SCRIPT
+
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/xenial64"
+
+  config.vm.define "dev", autostart: false do |dev|
+    config.vm.provider "virtualbox" do |vb|
+      vb.name = "battleships-vagrant-dev"
+      vb.memory = "2048"
+    end
+    dev.vm.network "private_network", ip: "10.10.10.10"
+    dev.vm.host_name = "dev"
+    dev.vm.synced_folder "~/dev", "/home/ubuntu/dev"
+    dev.vm.provision "shell", inline: "sudo ln -fs ~/dev /var/www", privileged: false
+    dev.vm.provision "file", source: "provision/varnish/battleships-api.vcl", destination: "battleships-api.vcl"
+    dev.vm.provision "shell", path: "provision/root.sh", args: [1]
+    dev.vm.provision "shell", path: "provision/user.sh", args: [ENV['VAGRANT_NAME'] || '', ENV['VAGRANT_EMAIL'] || ''], privileged: false
+    dev.vm.provision "file", source: "provision/nginx/battleships-api", destination: "battleships-api"
+    dev.vm.provision "shell", path: "provision/battleships-api.sh", args: [1], privileged: false
+    dev.vm.provision "shell", inline: $aclScript, run: "always", privileged: false
+  end
 
   config.vm.define "web", primary: true do |web|
     config.vm.provider "virtualbox" do |vb|
@@ -21,8 +44,7 @@ Vagrant.configure(2) do |config|
     web.vm.provision "shell", path: "provision/battleships-apiclient.sh", privileged: false
   end
 
-#  config.vm.define "db-master", autostart: false do |db|
-  config.vm.define "db-master" do |db|
+  config.vm.define "db-master", autostart: false do |db|
     config.vm.provider "virtualbox" do |vb|
       vb.name = "battleships-vagrant-db-master"
       vb.memory = "1024"
