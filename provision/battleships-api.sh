@@ -1,6 +1,8 @@
 #!/bin/bash
 
 isDevEnv=$1;
+symfonyVarDir=$2
+symfonyDevEnabled=$3
 
 # Host config
 echo "127.0.0.1 battleships-api.vagrant" | sudo tee -a /etc/hosts
@@ -9,6 +11,18 @@ echo "127.0.0.1 battleships-api.vagrant" | sudo tee -a /etc/hosts
 sudo mysql -e "CREATE DATABASE battleships CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci"
 sudo mysql -e "GRANT ALL PRIVILEGES ON battleships.* TO 'ubuntu'@'127.0.0.1' IDENTIFIED BY 'ubuntu'"
 sudo mysql -e "FLUSH PRIVILEGES"
+
+# Symfony env vars
+## for dev vm with shared files
+if [ $symfonyVarDir ]; then
+    # | as separator because of / in the variable
+    sed -i -e "s|# fastcgi_param SYMFONY__VAR_DIR .*|fastcgi_param SYMFONY__VAR_DIR $symfonyVarDir|" battleships-api
+fi
+
+## for dev vm to access app_dev.php
+if [ $symfonyDevEnabled ]; then
+    sed -i -e "s/# fastcgi_param SYMFONY__DEV_ENABLED .*/fastcgi_param SYMFONY__DEV_ENABLED 1/" battleships-api
+fi
 
 # Web server config (file copied by Vagrant file provision)
 sudo mv battleships-api /etc/nginx/sites-available/battleships-api

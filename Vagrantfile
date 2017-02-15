@@ -21,9 +21,9 @@ Vagrant.configure(2) do |config|
     dev.vm.provision "shell", inline: "sudo ln -fs ~/dev /var/www", privileged: false
     dev.vm.provision "file", source: "provision/varnish/battleships-api.vcl", destination: "battleships-api.vcl"
     dev.vm.provision "shell", path: "provision/root.sh", args: [1]
-    dev.vm.provision "shell", path: "provision/user.sh", args: [ENV['VAGRANT_NAME'] || '', ENV['VAGRANT_EMAIL'] || ''], privileged: false
+    dev.vm.provision "shell", path: "provision/user.sh", args: [ENV['VAGRANT_NAME'] || '', ENV['VAGRANT_EMAIL'] || '', '/tmp'], privileged: false
     dev.vm.provision "file", source: "provision/nginx/battleships-api", destination: "battleships-api"
-    dev.vm.provision "shell", path: "provision/battleships-api.sh", args: [1], privileged: false
+    dev.vm.provision "shell", path: "provision/battleships-api.sh", args: [1, '/tmp', 1], privileged: false
     dev.vm.provision "shell", inline: $aclScript, run: "always", privileged: false
   end
 

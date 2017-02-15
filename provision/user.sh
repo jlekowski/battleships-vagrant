@@ -2,6 +2,7 @@
 
 gitName=$1;
 gitEmail=$2;
+symfonyVarDir=$3
 
 echo "
 :set hlsearch
@@ -20,6 +21,11 @@ function parse_git_repo() {
 }
 PS1='\[\033[1;31m\][\[\033[1;32m\]\t\[\033[1;31m\]][\[\033[1;33m\]\u\[\033[1;31m\]@\[\033[1;33m\]\h\[\033[1;31m\]:\[\033[1;36m\]\W\[\033[1;31m\]]\$(parse_git_repo)\$(parse_git_branch) \[\033[00m\]$\[\033[00m\] '
 " | tee -a ~/.bashrc
+
+# for dev vm with shared files
+if [ $symfonyVarDir ]; then
+    echo "export SYMFONY__VAR_DIR=$symfonyVarDir" | tee -a ~/.bashrc
+fi
 
 git config --global user.name "$gitName"
 git config --global user.email "$gitEmail"
