@@ -77,5 +77,6 @@ service varnish restart
 
 if [ $isDevEnv ]; then
     sed -i -e "s/#general_log/general_log/" /etc/mysql/mysql.conf.d/mysqld.cnf
+    sed -i -e "s/bind-address/#bind-address/" /etc/mysql/mysql.conf.d/mysqld.cnf
 fi
 service mysql restart
