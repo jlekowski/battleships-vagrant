@@ -13,9 +13,10 @@ Vagrant setup to run and develop Battleships.
 2. Download and unzip or clone repository.
 3. Run
 ```
+# automatically runs web + 2 DBs (master and slave)
 vagrant up
-# or to set up GIT with your name and email
-VAGRANT_NAME='John Doe' VAGRANT_EMAIL='john@example.org' vagrant up
+# or to set up GIT with your name and email, and with 3 DBs (master and 2 slaves)
+VAGRANT_NAME='John Doe' VAGRANT_EMAIL='john@example.org' VAGRANT_DB_COUNT=3 vagrant up
 ```
 4. To log in to the VM
 ```
@@ -40,7 +41,7 @@ bin/console security:check
 
 Clear Symfony cache, OPCache, APC cache (battleships-api folder)
 ```
-bin/console cache:clear --env=prod
+bin/console cache:clear --env=prod --no-debug
 sudo service php7.0-fpm reload
 bin/console cache:apc:clear
 ```
@@ -66,11 +67,11 @@ phpdbg -qrr bin/phpunit --coverage-html /var/www/html/coverage/
 Test API (battleships-apiclient folder)
 ```
 # access web server directly
-bin/console test:e2e -v "battleships-api.vagrant:8080/app_dev.php/v1"
+bin/console test:e2e http://battleships-api.vagrant:8080/app_dev.php -v
 # access through Vagrant
-bin/console test:e2e "battleships-api.vagrant/v1"
+bin/console test:e2e http://battleships-api.vagrant
 # test Varnish
-bin/console test:varnish -vv "battleships-api.vagrant/v1"
+bin/console test:varnish http://battleships-api.vagrant -vv
 ```
 
 Varnish commands

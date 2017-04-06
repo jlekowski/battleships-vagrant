@@ -1,22 +1,30 @@
 #!/bin/bash
 
-isDevEnv=$1;
+isDevEnv=$1
+isNewDist=$2
 
 # to avoid unknown host when sudo (not necessary for some vagrant boxes)
 #sed -i -e "s/localhost$/localhost $(hostname)/" /etc/hosts
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y git vim nginx varnish php php-fpm php-xml php-mysql php-curl php-pear php-dev php-intl php-xdebug php-phpdbg unzip acl
-if [ $isDevEnv ]; then
-    apt-get install -y mysql-server php-mbstring
-    # support for folder sharing on Windows
-    #apt-get install -y virtualbox-guest-dkms
+apt update
+# install php-fpm first to avoid installing apache
+apt install -y php-fpm
+apt install -y git vim nginx varnish php php-xml php-mysql php-curl php-dev php-intl php-xdebug php-phpdbg unzip acl
+if [ $isNewDist ]; then
+    apt install -y php-apcu
+else
+    apt install -y php-pear
+    # APC in 16.04 must be taken from PEAR
+    pear config-set preferred_state beta
+    yes "" | pecl install apcu_bc
 fi
 
-# APC for backward compatibility
-pear config-set preferred_state beta
-yes "" | pecl install apcu_bc
+if [ $isDevEnv ]; then
+    apt install -y mysql-server php-mbstring
+    # support for folder sharing on Windows
+    #apt install -y virtualbox-guest-dkms
+fi
 
 # Enable OPCache
 echo "
@@ -36,18 +44,20 @@ opcache.enable_file_override = 1
 if [ $isDevEnv ]; then
     # Enable Xdebug
     echo "
-    xdebug.remote_enable = 1
-    xdebug.idekey = "PHPSTORM"
-    xdebug.overload_var_dump = 0
-    xdebug.remote_connect_back = 1
-    " | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini
+xdebug.remote_enable = 1
+xdebug.idekey = "PHPSTORM"
+xdebug.overload_var_dump = 0
+xdebug.remote_connect_back = 1
+" | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini
 fi
 
-# Enable APC/APCU
-echo "
+if [ ! $isNewDist ]; then
+    # Enable APC/APCU
+    echo "
 extension = apcu.so
 extension = apc.so
 " | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini /etc/php/7.0/phpdbg/php.ini
+fi
 
 service php7.0-fpm restart
 
@@ -78,5 +88,5 @@ service varnish restart
 if [ $isDevEnv ]; then
     sed -i -e "s/#general_log/general_log/" /etc/mysql/mysql.conf.d/mysqld.cnf
     sed -i -e "s/bind-address/#bind-address/" /etc/mysql/mysql.conf.d/mysqld.cnf
+    service mysql restart
 fi
-service mysql restart

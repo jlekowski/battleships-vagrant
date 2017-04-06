@@ -1,2 +1,4 @@
 /.vagrant/
+/composer-cache/
+!composer-cache/.gitkeep
 *.log
