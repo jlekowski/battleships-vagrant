@@ -1,11 +1,11 @@
 #!/bin/bash
 
-symfonyVarDir=$1
+battleshipsVarDir=$1
 
 cd /var/www/battleships-api
 # Set folder permissions (http://symfony.com/doc/current/book/installation.html)
-if [ $symfonyVarDir ]; then
-    varDir="$symfonyVarDir/var"
+if [ $battleshipsVarDir ]; then
+    varDir="$battleshipsVarDir/var"
 else
     varDir=var
 fi

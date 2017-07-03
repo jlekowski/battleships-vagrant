@@ -2,7 +2,7 @@
 
 gitName=$1
 gitEmail=$2
-symfonyVarDir=$3
+battleshipsVarDir=$3
 
 echo "
 :set hlsearch
@@ -23,9 +23,9 @@ PS1='\[\033[1;31m\][\[\033[1;32m\]\t\[\033[1;31m\]][\[\033[1;33m\]\u\[\033[1;31m
 " | tee -a ~/.bashrc
 
 # for dev vm with shared files (CLI)
-if [ $symfonyVarDir ]; then
-    echo "SYMFONY__VAR_DIR=$symfonyVarDir" | tee -a ~/.bashrc
-    export SYMFONY__VAR_DIR="$symfonyVarDir"
+if [ $battleshipsVarDir ]; then
+    echo "BATTLESHIPS_VAR_DIR=$battleshipsVarDir" | tee -a ~/.bashrc
+    export BATTLESHIPS_VAR_DIR="$battleshipsVarDir"
 fi
 
 git config --global user.name "$gitName"

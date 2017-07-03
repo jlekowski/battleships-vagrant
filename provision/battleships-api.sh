@@ -2,8 +2,8 @@
 
 externalDbCount=$1
 isDevEnv=$2
-symfonyVarDir=$3
-symfonyDevEnabled=$4
+battleshipsVarDir=$3
+battleshipsDevEnabled=$4
 
 # Host config
 echo "127.0.0.1 battleships-api.vagrant" | sudo tee -a /etc/hosts
@@ -23,14 +23,14 @@ fi
 
 # Symfony env vars
 ## for dev vm with shared files
-if [ $symfonyVarDir ]; then
+if [ $battleshipsVarDir ]; then
     # | as separator because of / in the variable
-    sed -i -e "s|# fastcgi_param SYMFONY__VAR_DIR .*|fastcgi_param SYMFONY__VAR_DIR $symfonyVarDir;|" battleships-api
+    sed -i -e "s|# fastcgi_param BATTLESHIPS_VAR_DIR .*|fastcgi_param BATTLESHIPS_VAR_DIR $battleshipsVarDir;|" battleships-api
 fi
 
 ## for dev vm to access app_dev.php
-if [ $symfonyDevEnabled ]; then
-    sed -i -e "s/# fastcgi_param SYMFONY__DEV_ENABLED .*/fastcgi_param SYMFONY__DEV_ENABLED 1;/" battleships-api
+if [ $battleshipsDevEnabled ]; then
+    sed -i -e "s/# fastcgi_param BATTLESHIPS_DEV_ENABLED .*/fastcgi_param BATTLESHIPS_DEV_ENABLED 1;/" battleships-api
 fi
 
 # Web server config (file copied by Vagrant file provision)
@@ -54,7 +54,7 @@ if [ ! $isDevEnv ] || [ ! -d /var/www/battleships-api ]; then
     fi
 
     ## set folder permissions (http://symfony.com/doc/current/book/installation.html)
-    bash ~/battleships-api-acl.sh $symfonyVarDir
+    bash ~/battleships-api-acl.sh $battleshipsVarDir
     rm ~/battleships-api-acl.sh
 
     ## set parameters
@@ -99,7 +99,7 @@ if [ ! $isDevEnv ] || [ ! -d /var/www/battleships-api ]; then
     fi
 else
     ## set folder permissions (http://symfony.com/doc/current/book/installation.html)
-    bash ~/battleships-api-acl.sh $symfonyVarDir
+    bash ~/battleships-api-acl.sh $battleshipsVarDir
     rm ~/battleships-api-acl.sh
 fi
 
