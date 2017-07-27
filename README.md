@@ -6,6 +6,7 @@ Vagrant setup to run and develop Battleships.
 ### LINKS
 * https://github.com/jlekowski/battleships-api - API
 * https://github.com/jlekowski/battleships-webclient - web client for the API
+* https://github.com/jlekowski/battleships-cliclient - CLI client for the API
 * https://github.com/jlekowski/battleships-apiclient - PHP client for the API
 
 ## === Installation ===
@@ -29,9 +30,15 @@ vagrant ssh
 ```
 
 ## === Changelog ===
+* version **1.1**
+  * Multiserver setup (Web + DBs with replication)
+  * Dev box configuration
+  * Handle parameters for GIT and number of DB instances
+  * Refactoring (organise provision scripts)
+  * Support for API changes (env variables, Symfony 3.3)
 * version **1.0**
- * Working version with API (full server config), Web Client, API Client
- * Some improvements around Windows/Linux host machine config and folder sync required
+  * Working version with API (full server config), Web Client, API Client
+  * Some improvements around Windows/Linux host machine config and folder sync required
 
 ## === Helpful commands ===
 Dependencies security check (battleships-api folder)
@@ -39,11 +46,11 @@ Dependencies security check (battleships-api folder)
 bin/console security:check
 ```
 
-Clear Symfony cache, OPCache, APC cache (battleships-api folder)
+Clear Symfony cache, OPCache, APC cache, Varnish Cache (battleships-api folder)
 ```
-bin/console cache:clear --env=prod --no-debug
+bin/console cache:clear --no-warmup --env=prod && bin/console cache:warmup --env=prod
+bin/console fos:httpcache:invalidate:regex / --env=prod
 sudo service php7.0-fpm reload
-bin/console cache:apc:clear
 ```
 
 Check ports used by web server, Varnish etc.
@@ -68,7 +75,7 @@ Test API (battleships-apiclient folder)
 ```
 # access web server directly
 bin/console test:e2e http://battleships-api.vagrant:8080/app_dev.php -v
-# access through Vagrant
+# access through Varnish
 bin/console test:e2e http://battleships-api.vagrant
 # test Varnish
 bin/console test:varnish http://battleships-api.vagrant -vv
