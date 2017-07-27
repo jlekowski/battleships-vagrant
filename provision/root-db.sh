@@ -16,7 +16,6 @@ mysql -e "CREATE DATABASE battleships CHARACTER SET = utf8mb4 COLLATE utf8mb4_un
 if [ $dbId -eq 1 ]; then
     mysql -e "GRANT ALL PRIVILEGES ON battleships.* TO 'ubuntu'@'$webIpAddress' IDENTIFIED BY 'ubuntu'"
     mysql -e "GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' IDENTIFIED BY 'slave'"
-    mysql -e "FLUSH PRIVILEGES"
 else
     mysql -e "GRANT SELECT ON battleships.* TO 'ubuntu'@'$webIpAddress' IDENTIFIED BY 'ubuntu'"
 fi

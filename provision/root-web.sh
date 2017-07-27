@@ -41,6 +41,10 @@ opcache.fast_shutdown = 1
 opcache.enable_file_override = 1
 " | tee -a /etc/php/7.0/fpm/php.ini
 
+echo "
+opcache.enable_cli = 1
+" | tee -a /etc/php/7.0/cli/php.ini /etc/php/7.0/phpdbg/php.ini
+
 if [ $isDevEnv ]; then
     # Enable Xdebug
     echo "
@@ -57,6 +61,10 @@ if [ ! $isNewDist ]; then
 extension = apcu.so
 extension = apc.so
 " | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini /etc/php/7.0/phpdbg/php.ini
+
+    echo "
+apc.enable_cli = 1
+" | tee -a /etc/php/7.0/cli/php.ini /etc/php/7.0/phpdbg/php.ini
 fi
 
 service php7.0-fpm restart
