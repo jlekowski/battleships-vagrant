@@ -7,6 +7,7 @@ battleshipsVarDir=$3
 echo "
 :set hlsearch
 :set number
+:set nofixeol
 " | tee ~/.vimrc
 
 echo "
@@ -38,6 +39,7 @@ git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset -%C(ye
 git config --global alias.st status
 git config --global alias.co checkout
 git config --global alias.br "branch -vv"
+git config --global alias.fa "fetch --all -p"
 git config --global core.editor vim
 git config --global core.pager "less -x4"
 git config --global core.autocrlf input
