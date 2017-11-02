@@ -51,8 +51,7 @@ bin/console security:check
 Clear Symfony cache, OPCache, APC cache, Varnish Cache (battleships-api folder)
 ```
 bin/console cache:clear --no-warmup --env=prod && bin/console cache:warmup --env=prod
-bin/console fos:httpcache:invalidate:regex / --env=prod
-sudo service php7.0-fpm reload
+sudo service php7.1-fpm reload
 ```
 
 Check ports used by web server, Varnish etc.
