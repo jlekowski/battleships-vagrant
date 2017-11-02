@@ -30,6 +30,8 @@ vagrant ssh
 ```
 
 ## === Changelog ===
+* version **1.2**
+  * Setup with PHP 7.1 (API 1.5)
 * version **1.1**
   * Multiserver setup (Web + DBs with replication)
   * Dev box configuration

@@ -1,24 +1,16 @@
 #!/bin/bash
 
 isDevEnv=$1
-isNewDist=$2
 
 # to avoid unknown host when sudo (not necessary for some vagrant boxes)
 #sed -i -e "s/localhost$/localhost $(hostname)/" /etc/hosts
 
 export DEBIAN_FRONTEND=noninteractive
+add-apt-repository ppa:ondrej/php -y
 apt update
 # install php-fpm first to avoid installing apache
 apt install -y php-fpm
-apt install -y git vim nginx varnish php php-xml php-mysql php-curl php-dev php-intl php-xdebug php-phpdbg unzip acl
-if [ $isNewDist ]; then
-    apt install -y php-apcu
-else
-    apt install -y php-pear
-    # APC in 16.04 must be taken from PEAR
-    pear config-set preferred_state beta
-    yes "" | pecl install apcu_bc
-fi
+apt install -y git vim nginx varnish php php-xml php-mysql php-curl php-dev php-intl php-apcu php-xdebug php-phpdbg unzip acl
 
 if [ $isDevEnv ]; then
     apt install -y mysql-server php-mbstring
@@ -39,11 +31,13 @@ opcache.revalidate_path = 1
 opcache.save_comments = 1
 opcache.fast_shutdown = 1
 opcache.enable_file_override = 1
-" | tee -a /etc/php/7.0/fpm/php.ini
+" | tee -a /etc/php/7.1/fpm/php.ini
 
 echo "
 opcache.enable_cli = 1
-" | tee -a /etc/php/7.0/cli/php.ini /etc/php/7.0/phpdbg/php.ini
+
+apc.enable_cli = 1
+" | tee -a /etc/php/7.1/cli/php.ini /etc/php/7.1/phpdbg/php.ini
 
 if [ $isDevEnv ]; then
     # Enable Xdebug
@@ -52,22 +46,10 @@ xdebug.remote_enable = 1
 xdebug.idekey = "PHPSTORM"
 xdebug.overload_var_dump = 0
 xdebug.remote_connect_back = 1
-" | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini
+" | tee -a /etc/php/7.1/fpm/php.ini /etc/php/7.1/cli/php.ini
 fi
 
-if [ ! $isNewDist ]; then
-    # Enable APC/APCU
-    echo "
-extension = apcu.so
-extension = apc.so
-" | tee -a /etc/php/7.0/fpm/php.ini /etc/php/7.0/cli/php.ini /etc/php/7.0/phpdbg/php.ini
-
-    echo "
-apc.enable_cli = 1
-" | tee -a /etc/php/7.0/cli/php.ini /etc/php/7.0/phpdbg/php.ini
-fi
-
-service php7.0-fpm restart
+service php7.1-fpm restart
 
 # Composer
 curl -sS https://getcomposer.org/installer | php

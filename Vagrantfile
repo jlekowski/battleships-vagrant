@@ -25,25 +25,6 @@ Vagrant.configure(2) do |config|
     dev.vm.provision "shell", path: "provision/battleships-api-acl.sh", args: ['/tmp'], run: "always", privileged: false
   end
 
-  config.vm.define "dev-new", autostart: false do |dev|
-    config.vm.provider "virtualbox" do |vb|
-      vb.name = "battleships-vagrant-dev-new"
-      vb.memory = "1536"
-    end
-    dev.vm.box = "ubuntu/yakkety64"
-    dev.vm.network "private_network", ip: "10.10.10.10"
-    dev.vm.host_name = "dev-new"
-    dev.vm.synced_folder "~/dev", "/home/ubuntu/dev"
-    dev.vm.provision "shell", inline: "sudo ln -fs ~/dev /var/www", privileged: false
-    dev.vm.provision "file", source: "provision/varnish/battleships-api.vcl", destination: "battleships-api.vcl"
-    dev.vm.provision "shell", path: "provision/root-web.sh", args: [1, 1]
-    dev.vm.provision "shell", path: "provision/user-web.sh", args: [ENV['VAGRANT_NAME'] || '', ENV['VAGRANT_EMAIL'] || '', '/tmp'], privileged: false
-    dev.vm.provision "file", source: "provision/nginx/battleships-api", destination: "battleships-api"
-    dev.vm.provision "file", source: "provision/battleships-api-acl.sh", destination: "battleships-api-acl.sh"
-    dev.vm.provision "shell", path: "provision/battleships-api.sh", args: [0, 1, '/tmp', 1], privileged: false
-    dev.vm.provision "shell", path: "provision/battleships-api-acl.sh", args: ['/tmp'], run: "always", privileged: false
-  end
-
   # DB must be created before web is provisioned
   (1..dbCount).each do |i|
     config.vm.define "db#{i}" do |db|
